@@ -15,7 +15,7 @@
         </FormItem>
         <br/>
         <FormItem class="form-item">
-          <Button type="primary" @click="handleSubmit('formInline')">登录</Button>
+          <Button type="primary" @click="test">登录</Button>
         </FormItem>
       </Form>
     </card>
@@ -42,10 +42,17 @@
       };
     },
     methods: {
-      handleSubmit(name) {
-        this.$refs[name].validate((valid) => {
+      // 为什么用handleSubmit函数名，this 等于 undefined
+      test() {
+        this.$refs["formInline"].validate((valid) => {
           if (valid) {
             this.$Message.success('Success!');
+            // 拿到的用户名、密码，应该持久化到本地。考虑vuex-persistence 或 localStorage
+            this.$http.log.login.post({
+              username: this.formInline.user,
+              password: this.formInline.password
+            });
+            this.$router.push({name:'Layout'});
           } else {
             this.$Message.error('Fail!');
           }
