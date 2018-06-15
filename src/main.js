@@ -5,6 +5,7 @@ import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 import App from './App';
 import router from './router';
+import store from './store';
 import services from "./api";
 
 Vue.use(iView);
@@ -18,5 +19,6 @@ new Vue({
     App
   },
   router,
+  store,
   template: '<App/>'
 });

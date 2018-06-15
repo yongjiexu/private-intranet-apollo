@@ -52,7 +52,9 @@
               username: this.formInline.user,
               password: this.formInline.password
             });
-            this.$router.push({name:'Layout'});
+            this.$router.push({
+              path:'/index/query/mysql-query'
+            });
           } else {
             this.$Message.error('Fail!');
           }

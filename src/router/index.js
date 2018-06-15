@@ -11,7 +11,8 @@ import Dml from "../components/dml/dml";
 import Ddl from "../components/ddl/ddl";
 import SlowQeuryStatics from "../components/slow-query-statics/slow-query-statics";
 import SlowQueryDetails from "../components/slow-query-details/slow-query-details";
-import MysqlMonitor from "../components/mysql-monitor/mysql-monitor"
+import MysqlMonitor from "../components/mysql-monitor/mysql-monitor";
+
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -36,65 +37,94 @@ export default new VueRouter({
         // 查询路由
         {
           path: 'query/mysql-query',
-          component: Query
+          components: {
+            querySlashMysqlQuery: Query
+          }
         },
         {
           path: 'query/mysql-stable-query',
-          component: Query
+          components: {
+            querySlashMysqlStableQuery: Query
+          }
         },
-        ,
         {
           path: 'query/pg-query',
-          component: Query
+          components: {
+            querySlashPgQuery: Query
+          }
         },
         {
           path: 'query/pg-stable-query',
-          component: Query
+          components: {
+            querySlashPgStableQuery: Query
+          }
         },
         {
           path: 'query/tidb-query',
-          component: Query
+          components: {
+            querySlashTidbQuery: Query
+          }
         },
         {
           path: 'query/tidb-stable-query',
-          component: Query
+          components: {
+            queryTidbStableQuery: Query
+          }
         },
         // 提交工单路由
         {
           path: 'submit-order',
-          component: OrderSubmission
+          components: {
+            submitOrder: OrderSubmission
+          }
         },
         {
           path: 'order-list/order-list-inited',
-          component: OrderListInited
+          components: {
+            orderListSlashOrderListInited: OrderListInited
+          }
         },
         {
           path: 'order-list/order-list-assigned',
-          component: OrderListAssigned
+          components: {
+            orderListSlashOrderListAssigned: OrderListAssigned
+          }
         },
         {
           path: 'order-list/order-list-role-query',
-          component: OrderListRoleQuery
+          components: {
+            orderListSlashOrderListRoleQuery: OrderListRoleQuery
+          }
         },
         {
           path: 'dml',
-          component: Dml
+          components: {
+            dml: Dml
+          }
         },
         {
           path: 'ddl',
-          component: Ddl
+          components: {
+            ddl: Ddl
+          }
         },
         {
           path: 'slow-query/slow-query-statics',
-          component: SlowQeuryStatics
+          components: {
+            slowQuerySlowQueryStatics: SlowQeuryStatics
+          }
         },
         {
           path: 'slow-query/slow-query-details',
-          component: SlowQueryDetails
+          components: {
+            slowQuerySlashSlowQueryDetails: SlowQueryDetails
+          }
         },
         {
           path: 'data-monitor/mysql-monitor',
-          component: MysqlMonitor
+          component: {
+            dataMonitorSlashMysqlMonitor: MysqlMonitor
+          }
         }
         // ...其他子路由
       ]

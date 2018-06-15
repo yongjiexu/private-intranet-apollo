@@ -26,8 +26,8 @@
           <template slot="title">
             工单列表
           </template>
-          <MenuItem name="order-list-i-inited">我发起的</MenuItem>
-          <MenuItem name="order-list-i-assigned">被指派的</MenuItem>
+          <MenuItem name="order-list-inited">我发起的</MenuItem>
+          <MenuItem name="order-list-assigned">被指派的</MenuItem>
           <MenuItem name="order-list-role-query">角色查询</MenuItem>
         </Submenu>
         <MenuItem name="dml">DML</MenuItem>
@@ -62,11 +62,116 @@
 </template>
 
 <script>
+  import {mapMutations} from 'vuex';
+
   export default {
     name: 'm-header',
     methods: {
+      ...mapMutations({
+        setTabContents: 'SET_TABCONTENTS',
+        setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME'
+      }),
       handleSelect(name) {
+        debugger
         console.log(`in handleSelect ${name}`);
+        switch (name) {
+          case 'mysql-query':
+            // 渲染新tab
+            this.setTabContents({
+              name: 'mysql-query',
+              routerViewName: 'querySlashMysqlQuery',
+              label: 'MYSQL查询'
+            });
+            this.setCurrentActiveName('mysql-query');
+            // 添加路由
+            this.$router.push({
+              path: '/index/query/mysql-query'
+            });
+            break;
+          case 'mysql-stable-query':
+            this.setTabContents({
+              name: 'mysql-stable-query',
+              routerViewName: 'querySlashMysqlStableQuery',
+              label: "MYSQL stable 查询"
+            });
+            this.setCurrentActiveName('mysql-stable-query');
+            this.$router.push({
+              path: '/index/query/mysql-stable-query'
+            });
+            break;
+          case 'pg-query':
+            this.$router.push({
+              path: 'query/pg-query'
+            });
+            break;
+          case 'pg-stable-query':
+            this.$router.push({
+              path: 'query/pg-stable-query'
+            });
+            break;
+          case 'tidb-query':
+            this.$router.push({
+              path: 'query/tidb-query'
+            });
+            break;
+          case 'tidb-stable-query':
+            this.$router.push({
+              path: 'query/tidb-stable-query'
+            });
+            break;
+          case 'submit-order':
+            this.$router.push({
+              path: 'submit-order'
+            });
+            break;
+          case 'order-list-inited':
+            this.$router.push({
+              path: 'order-list/order-list-inited'
+            });
+            break;
+          case 'order-list-assigned':
+            this.$router.push({
+              path: 'order-list/order-list-assigned'
+            });
+            break;
+          case 'order-list-role-query':
+            this.$router.push({
+              path: 'order-list/order-list-role-query'
+            });
+            break;
+          case 'dml':
+            this.$router.push({
+              path: 'dml'
+            });
+            break;
+          case 'ddl':
+            this.$router.push({
+              path: 'ddl'
+            });
+            break;
+          case 'slow-query-statistics':
+            this.$router.push({
+              path: 'slow-query/slow-query-statics'
+            });
+            break;
+          case 'slow-query-detail':
+            this.$router.push({
+              path: 'slow-query/slow-query-details'
+            });
+            break;
+          case 'mysql-monitor':
+            this.$router.push({
+              path: 'data-monitor/mysql-monitor'
+            });
+            break;
+          case 'collect-sql':
+            this.$router.push({
+              path: ''
+            });
+            break;
+          default:
+            alert("header中没有这个选项");
+        }
       }
     }
   };
