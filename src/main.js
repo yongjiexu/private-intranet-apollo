@@ -12,6 +12,8 @@ Vue.use(iView);
 Vue.config.productionTip = false;
 Vue.prototype.$http = services;
 
+window.testNum = 0;
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

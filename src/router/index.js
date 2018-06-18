@@ -12,8 +12,17 @@ import Ddl from "../components/ddl/ddl";
 import SlowQeuryStatics from "../components/slow-query-statics/slow-query-statics";
 import SlowQueryDetails from "../components/slow-query-details/slow-query-details";
 import MysqlMonitor from "../components/mysql-monitor/mysql-monitor";
+import localState from "../store";
 
 Vue.use(VueRouter);
+
+let localTabIndex = localState.state.tabIndex;
+console.log(localTabIndex);
+
+function routerViewName() {
+  debugger;
+  return `/index/query/mysql-stable-query?index=${localTabIndex.mysqlStableQueryIndex}`;
+}
 
 export default new VueRouter({
   mode: 'history',
@@ -36,15 +45,17 @@ export default new VueRouter({
       children: [
         // 查询路由
         {
-          path: 'query/mysql-query',
+          path: '/index/query/mysql-query',
           components: {
-            querySlashMysqlQuery: Query
+            [`/index/query/mysql-query?index=0`]: Query
           }
         },
         {
           path: 'query/mysql-stable-query',
           components: {
-            querySlashMysqlStableQuery: Query
+            // 优化：可以提前准备5-10条，
+            // 在当前存在的标签页超过这个数时再动态添加路由。
+            // [`/index/query/mysql-stable-query?index=`]: Query
           }
         },
         {

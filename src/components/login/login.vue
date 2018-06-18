@@ -23,6 +23,9 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex';
+  import {mapMutations} from 'vuex';
+
   export default {
     name: 'login',
     data() {
@@ -41,7 +44,17 @@
         }
       };
     },
+    computed: mapState([
+      'tabIndex',
+      'tabContents',
+      'currentActiveTabName'
+    ]),
     methods: {
+      ...mapMutations({
+        setTabContents: 'SET_TABCONTENTS',
+        setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME',
+        setTabIndex: 'SET_TAB_INDEX'
+      }),
       // 为什么用handleSubmit函数名，this 等于 undefined
       test() {
         this.$refs["formInline"].validate((valid) => {
@@ -52,8 +65,12 @@
               username: this.formInline.user,
               password: this.formInline.password
             });
+            this.setTabIndex('mysqlQueryIndex');
             this.$router.push({
-              path:'/index/query/mysql-query'
+              path: '/index/query/mysql-query',
+              query: {
+                index: this.tabIndex.mysqlQueryIndex
+              }
             });
           } else {
             this.$Message.error('Fail!');

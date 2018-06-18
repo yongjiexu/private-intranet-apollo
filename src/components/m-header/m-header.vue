@@ -62,41 +62,57 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex';
   import {mapMutations} from 'vuex';
+  import Query from '../query/query';
 
   export default {
     name: 'm-header',
+    computed: {
+      ...mapState(['tabIndex'])
+    },
     methods: {
       ...mapMutations({
         setTabContents: 'SET_TABCONTENTS',
-        setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME'
+        setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME',
+        setTabIndex: 'SET_TAB_INDEX'
       }),
       handleSelect(name) {
-        debugger
+        debugger;
         console.log(`in handleSelect ${name}`);
         switch (name) {
           case 'mysql-query':
-            // 渲染新tab
+            this.setTabIndex('mysqlQueryIndex');
             this.setTabContents({
-              name: 'mysql-query',
-              routerViewName: 'querySlashMysqlQuery',
-              label: 'MYSQL查询'
+              name: `/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`,
+              routerViewName: `/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`,
+              label: "MYSQL 查询"
             });
-            this.setCurrentActiveName('mysql-query');
-            // 添加路由
+            this.setCurrentActiveName(`/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`);
+            // 维护一张动态的路由表，使同一个实例的对象渲染到不同的路由视图
+            this.$router.options.routes[2].children[0].components[`/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`] = Query;
             this.$router.push({
-              path: '/index/query/mysql-query'
+              path: '/index/query/mysql-query',
+              query: {
+                index: this.tabIndex.mysqlQueryIndex
+              }
             });
             break;
           case 'mysql-stable-query':
+            this.setTabIndex('mysqlStableQueryIndex');
             this.setTabContents({
-              name: 'mysql-stable-query',
-              routerViewName: 'querySlashMysqlStableQuery',
+              name: `/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`,
+              routerViewName: `/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`,
               label: "MYSQL stable 查询"
             });
-            this.setCurrentActiveName('mysql-stable-query');
+            this.setCurrentActiveName(`/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`);
+            // 维护一张动态的路由表，使同一个实例的对象渲染到不同的路由视图
+            this.$router.options.routes[2].children[1].components[`/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`] = Query;
             this.$router.push({
-              path: '/index/query/mysql-stable-query'
+              path: '/index/query/mysql-stable-query',
+              query: {
+                index: this.tabIndex.mysqlStableQueryIndex
+              }
             });
             break;
           case 'pg-query':
