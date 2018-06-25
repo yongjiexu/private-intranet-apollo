@@ -65,6 +65,8 @@
   import {mapState} from 'vuex';
   import {mapMutations} from 'vuex';
   import Query from '../query/query';
+  import OrderSubmission from "../order-submission/order-submission";
+
 
   export default {
     name: 'm-header',
@@ -78,19 +80,15 @@
         setTabIndex: 'SET_TAB_INDEX'
       }),
       handleSelect(name) {
-        debugger;
         console.log(`in handleSelect ${name}`);
         switch (name) {
           case 'mysql-query':
             this.setTabIndex('mysqlQueryIndex');
             this.setTabContents({
               name: `/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`,
-              routerViewName: `/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`,
               label: "MYSQL 查询"
             });
             this.setCurrentActiveName(`/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`);
-            // 维护一张动态的路由表，使同一个实例的对象渲染到不同的路由视图
-            this.$router.options.routes[2].children[0].components[`/index/query/mysql-query?index=${this.tabIndex.mysqlQueryIndex}`] = Query;
             this.$router.push({
               path: '/index/query/mysql-query',
               query: {
@@ -101,13 +99,11 @@
           case 'mysql-stable-query':
             this.setTabIndex('mysqlStableQueryIndex');
             this.setTabContents({
+              route: 'index/query/mysql-stable-query',
               name: `/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`,
-              routerViewName: `/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`,
               label: "MYSQL stable 查询"
             });
             this.setCurrentActiveName(`/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`);
-            // 维护一张动态的路由表，使同一个实例的对象渲染到不同的路由视图
-            this.$router.options.routes[2].children[1].components[`/index/query/mysql-stable-query?index=${this.tabIndex.mysqlStableQueryIndex}`] = Query;
             this.$router.push({
               path: '/index/query/mysql-stable-query',
               query: {
@@ -136,33 +132,93 @@
             });
             break;
           case 'submit-order':
+            this.setTabIndex('submitOrderIndex');
+            this.setTabContents({
+              route: '/index/submit-order',
+              name: `/index/submit-order?index=${this.tabIndex.submitOrderIndex}`,
+              label: "提交工单"
+            });
+            this.setCurrentActiveName(`/index/submit-order?index=${this.tabIndex.submitOrderIndex}`);
             this.$router.push({
-              path: 'submit-order'
+              path: '/index/submit-order',
+              query: {
+                index: this.tabIndex.submitOrderIndex
+              }
             });
             break;
           case 'order-list-inited':
+            this.setTabIndex('orderListInitedIndex');
+            this.setTabContents({
+              route: '/index/order-list/order-list-inited',
+              name: `/index/order-list/order-list-inited?index=${this.tabIndex.orderListInitedIndex}`,
+              label: "我发起的"
+            });
+            this.setCurrentActiveName(`/index/order-list/order-list-inited?index=${this.tabIndex.orderListInitedIndex}`);
             this.$router.push({
-              path: 'order-list/order-list-inited'
+              path: '/index/order-list/order-list-inited',
+              query: {
+                index: this.tabIndex.orderListInitedIndex
+              }
             });
             break;
           case 'order-list-assigned':
+            this.setTabIndex('orderListAssignedIndex');
+            this.setTabContents({
+              route: '/index/order-list/order-list-assigned',
+              name: `/index/order-list/order-list-assigned?index=${this.tabIndex.orderListAssignedIndex}`,
+              label: "指派给我的"
+            });
+            this.setCurrentActiveName(`/index/order-list/order-list-inited?index=${this.tabIndex.orderListAssignedIndex}`);
             this.$router.push({
-              path: 'order-list/order-list-assigned'
+              path: '/index/order-list/order-list-assigned',
+              query: {
+                index: this.tabIndex.orderListAssignedIndex
+              }
             });
             break;
           case 'order-list-role-query':
+            this.setTabIndex('orderListRoleQueryIndex');
+            this.setTabContents({
+              route: '/index/order-list/order-list-role-query',
+              name: `/index/order-list/order-list-role-query?index=${this.tabIndex.orderListRoleQueryIndex}`,
+              label: "角色查询"
+            });
+            this.setCurrentActiveName(`/index/order-list/order-list-role-query?index=${this.tabIndex.orderListRoleQueryIndex}`);
             this.$router.push({
-              path: 'order-list/order-list-role-query'
+              path: '/index/order-list/order-list-role-query',
+              query: {
+                index: this.tabIndex.orderListRoleQueryIndex
+              }
             });
             break;
           case 'dml':
+            this.setTabIndex('dmlIndex');
+            this.setTabContents({
+              route: '/index/dml',
+              name: `/index/dml?index=${this.tabIndex.dmlIndex}`,
+              label: "DML"
+            });
+            this.setCurrentActiveName(`/index/dml?index=${this.tabIndex.dmlIndex}`);
             this.$router.push({
-              path: 'dml'
+              path: '/index/dml',
+              query: {
+                index: this.tabIndex.dmlIndex
+              }
             });
             break;
           case 'ddl':
+            this.setTabIndex('ddlIndex');
+            this.setTabContents({
+              route: '/index/ddl',
+              name: `/index/ddl?index=${this.tabIndex.ddlIndex}`,
+              label: "变更工单"
+            });
+            this.setCurrentActiveName(`/index/ddl?index=${this.tabIndex.ddlIndex}`);
             this.$router.push({
-              path: 'ddl'
+              path: '/index/ddl',
+              query: {
+                index: this.tabIndex.ddlIndex
+              }
             });
             break;
           case 'slow-query-statistics':

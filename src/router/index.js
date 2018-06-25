@@ -4,6 +4,12 @@ import Login from '../components/login/login';
 import Layout from '../components/layout/layout';
 import Query from '../components/query/query';
 import OrderSubmission from "../components/order-submission/order-submission";
+
+import DbAuthApply from '../components/db-auth-apply/db-auth-apply';
+import DbRoleQuery from '../components/db-role-query/db-role-query';
+import DbOwnerQueryAssign from '../components/db-owner-query-assign/db-owner-query-assign';
+import BigDataOrder from '../components/big-data-order/big-data-order';
+
 import OrderListInited from "../components/order-list-inited/order-list-inited";
 import OrderListAssigned from "../components/order-list-assigned/order-list-assigned";
 import OrderListRoleQuery from "../components/order-list-role-query/order-list-role-query";
@@ -20,7 +26,6 @@ let localTabIndex = localState.state.tabIndex;
 console.log(localTabIndex);
 
 function routerViewName() {
-  debugger;
   return `/index/query/mysql-stable-query?index=${localTabIndex.mysqlStableQueryIndex}`;
 }
 
@@ -90,6 +95,40 @@ export default new VueRouter({
           }
         },
         {
+          path: 'db-auth-apply',
+          component: DbAuthApply
+        },
+        {
+          path: 'db-role-query',
+          components: {
+            dbRoleQuery: DbRoleQuery
+          }
+        },
+        {
+          path: 'db-owner-query-assign',
+          components: {
+            dbOwnerQueryAssign: DbOwnerQueryAssign
+          }
+        },
+        {
+          path: 'big-data-order',
+          components: {
+            bigDataOrder: BigDataOrder
+          }
+        },
+        {
+          path: 'dml',
+          components: {
+            dml: Dml
+          }
+        },
+        {
+          path: 'ddl',
+          components: {
+            ddl: Ddl
+          }
+        },
+        {
           path: 'order-list/order-list-inited',
           components: {
             orderListSlashOrderListInited: OrderListInited
@@ -105,18 +144,6 @@ export default new VueRouter({
           path: 'order-list/order-list-role-query',
           components: {
             orderListSlashOrderListRoleQuery: OrderListRoleQuery
-          }
-        },
-        {
-          path: 'dml',
-          components: {
-            dml: Dml
-          }
-        },
-        {
-          path: 'ddl',
-          components: {
-            ddl: Ddl
           }
         },
         {

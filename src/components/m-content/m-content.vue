@@ -1,24 +1,24 @@
 <template>
   <div class="content-wrapper">
-    <Tabs type="card" closable
-          :animated="false"
-          :value="currentActiveTabName"
-          @on-click="handleOnClick"
-          @on-tab-remove="handleTabRemove">
-      <TabPane v-for="(tabContent,index) in tabContents"
-               :key="index"
-               :name="tabContent.name"
-               :label="tabContent.label">
-        <keep-alive>
-          <router-view :name="tabContent.routerViewName"></router-view>
-        </keep-alive>
-      </TabPane>
-      <Button type="ghost" size="small" slot="extra">增加</Button>
-    </Tabs>
+    <el-tabs :value="currentActiveTabName" type="card" closable
+             @tab-remove="removeTab"
+             @tab-click="clickTab">
+      <el-tab-pane
+        v-for="(tabContent, index) in tabContents"
+        :key="tabContent.name"
+        :label="tabContent.label"
+        :name="tabContent.name">
+        <TabContent
+          :route="tabContent.route"
+          :index="index">
+        </TabContent>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
+  import TabContent from '../../base/tab-content/tab-content';
   import {mapState} from 'vuex';
   import {mapMutations} from 'vuex';
 
@@ -26,6 +26,9 @@
     name: "m-content",
     data() {
       return {};
+    },
+    components: {
+      TabContent
     },
     computed: mapState([
       'tabIndex',
@@ -40,27 +43,57 @@
        * @param from
        */
       '$route'(to, from) {
-        debugger;
+        debugger
         console.log(`${from.fullPath} --> ${to.fullPath}`);
         let toFullPath = to.fullPath;
         let path = to.fullPath.split('?');
 
         let toPathSegment = to.fullPath.split('?')[0].split('/');
-        // 设置当前激活页
+        /* 设置当前激活页
+        todo 以后随着页面的增多，判断条件会跟着变复杂
+         */
+        debugger
         this.setCurrentActiveName(to.fullPath);
+        // if (to.fullPath !== '/index/db-auth-apply') {}
       }
     },
     mounted() {
-      debugger;
       this.setCurrentActiveName('/index/query/mysql-query?index=0');
+      document.querySelector(".el-tabs__content").style.height = "100%";
     },
     methods: {
       ...mapMutations({
         setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME',
         deleteTabContentsElm: 'DELETE_TABCONTENTS_ELM'
       }),
+      clickTab(tabInstance) {
+        console.log(tabInstance);
+        console.log(`点击了${tabInstance.name}`);
+        this.setCurrentActiveName(tabInstance.name);
+        this.$router.push({
+          path: tabInstance.name
+        });
+      },
+      removeTab(targetName) {
+        let tabs = this.tabContents;
+        let activeName = this.currentActiveTabName;
+        if (activeName === targetName) {
+          tabs.forEach((tab, index) => {
+            if (tab.name === targetName) {
+              let nextTab = tabs[index + 1] || tabs[index - 1];
+              if (nextTab) {
+                activeName = nextTab.name;
+              }
+            }
+          });
+        }
+        this.setCurrentActiveName(activeName);
+        this.$router.push({
+          path: activeName
+        });
+        this.deleteTabContentsElm(targetName);
+      },
       handleOnClick(name) {
-        debugger;
         console.log(`点击了${name}`);
         this.setCurrentActiveName(name);
         console.log(`当前激活的标签页${this.currentActiveTabName}`);
@@ -80,5 +113,15 @@
 </script>
 
 <style scoped>
+  .content-wrapper {
+    height: 100%;
+  }
 
+  .el-tabs {
+    height: 100%;
+  }
+
+  .el-tab-pane {
+    height: 100%;
+  }
 </style>

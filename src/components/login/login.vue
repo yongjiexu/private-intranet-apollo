@@ -89,6 +89,14 @@
     margin-top: 15%;
   }
 
+  >>> .ivu-card-head {
+    text-align: center;
+  }
+
+  >>> .ivu-form-item-content {
+    text-align: center;
+  }
+
   .card {
     width: 350px;
   }
