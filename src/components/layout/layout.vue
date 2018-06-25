@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="layout-wrapper">
     <m-header></m-header>
     <m-content></m-content>
   </div>
@@ -19,5 +19,7 @@
 </script>
 
 <style scoped>
-
+  .layout-wrapper {
+    height: 100%;
+  }
 </style>

@@ -1,8 +1,14 @@
 <template>
   <div class="content-wrapper">
-    <h2 class="title">DML-工单提交(Stable环境不执行)</h2>
+    <h2 class="title">超大数据导出工单(数据导出上限为100000行，若超出请自行联系dba进行导出)</h2>
     <div class="form-wrapper">
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+        <FormItem label="数据库类型" prop="selectedDb">
+          <Select @on-change="handleSelectDbType">
+            <Option value="mysql">mysql</Option>
+            <Option value="pg">pg</Option>
+          </Select>
+        </FormItem>
         <FormItem label="数据库" prop="selectedDb">
           <Select v-model="formValidate.selectedDb" @on-change="handleSelectDb">
             <Option v-for="(db,index) in dbs" :key="index" :value="db">{{db}}</Option>
@@ -14,11 +20,8 @@
         <FormItem label="owner:" prop="selectedDbOwnerInfo">
           <Input disabled v-model="formValidate.selectedDbOwnerInfo"></Input>
         </FormItem>
-        <FormItem label="影响行数" prop="affectedRowNums">
-          <Input v-model="formValidate.affectedRowNums"></Input>
-        </FormItem>
-        <FormItem label="DML:" prop="dmlStatement">
-          <Input type="textarea" v-model="formValidate.dmlStatement"></Input>
+        <FormItem label="SQL:" prop="sqlStatement">
+          <Input type="textarea" v-model="formValidate.sqlStatement"></Input>
         </FormItem>
         <FormItem label="详情描述:" prop="detailDesc">
           <Input type="textarea" v-model="formValidate.detailDesc"></Input>
@@ -33,21 +36,24 @@
 
 <script>
   export default {
-    name: "dml",
+    name: "big-data",
     data() {
       return {
-        dbs: [], // use
+        dbs: [],
         dbUsers: [],
         dbOwnerIds: [],
         formValidate: {
-          selectedDb: "", // use
-          selectedDbId: undefined, // use
-          selectedDbOwnerInfo: "", // use
-          affectedRowNums: "", // use
-          dmlStatement: "",
+          selectedDbType: "",
+          selectedDb: "",
+          selectedDbId: undefined,
+          selectedDbOwnerInfo: "",
+          sqlStatement: "",
           detailDesc: ""
         },
         ruleValidate: {
+          selectedDbType: [
+            {required: true, message: "请选择一个数据库", trigger: "blur"}
+          ],
           selectedDb: [
             {required: true, message: "请选择一个数据库", trigger: "blur"}
           ],
@@ -62,14 +68,11 @@
           selectedDbOwnerInfo: [
             {required: true, message: "请选择数据库owner", trigger: "blur"}
           ],
-          dmlStatement: [
+          sqlStatement: [
             {required: true, message: "请选择一个数据库", trigger: "blur"}
           ],
           detailDesc: [
             {required: true, message: "请选择一个数据库", trigger: "blur"}
-          ],
-          affectedRowNums: [
-            {required: true, message: "请输入影响行数", trigger: "blur"}
           ]
         }
       };
@@ -98,9 +101,6 @@
     },
     methods: {
       async init() {
-        this.dbs = await this.$http.db.mysqlDb.get({
-          env: "DML"
-        });
       },
       async handleSelectDb(value) {
         console.log(value);
@@ -115,18 +115,30 @@
         this.formValidate.selectedDbOwnerInfo = this.dbOwnersNameList;
         console.log(this.selectedDbOwnerInfo);
       },
+      async handleSelectDbType(value) {
+        this.formValidate.selectedDbType = value;
+        //  查询属于这种数据库类型的数据库
+        if (value === "mysql") {
+          this.dbs = await this.$http.db.mysqlDb.get({
+            env: "prod"
+          });
+        } else {
+          this.dbs = await this.$http.db.pgDb.get({
+            env: "prod"
+          });
+        }
+      },
       async handleSubmit(name) {
         this.$refs[name].validate(valid => {
           if (valid) {
             this.$Message.success("Success!");
             debugger;
             // 验证成功，提交请求
-            this.$http.auth.dml.createownerShip({
+            this.$http.auth.largeData.createLargeData({
               db_id: this.formValidate.selectedDbId,
               description: this.formValidate.detailDesc,
-              rowAffected: this.formValidate.affectedRowNums,
-              sql: this.formValidate.dmlStatement,
-              ticket_type: 3
+              sql: this.formValidate.sqlStatement,
+              ticket_type: 4
             });
           } else {
             this.$Message.error("Fail!");
@@ -142,7 +154,6 @@
     width: 90%;
     margin: auto
   }
-
   .title {
     margin-bottom: 20px;
     padding-top: 26px;
@@ -152,8 +163,7 @@
     font-weight: 500;
     font-size: 18px;
   }
-
-  .form-wrapper {
+  .form-wrapper{
     width: 70%;
     margin: auto;
   }

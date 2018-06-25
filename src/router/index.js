@@ -4,6 +4,12 @@ import Login from '../components/login/login';
 import Layout from '../components/layout/layout';
 import Query from '../components/query/query';
 import OrderSubmission from "../components/order-submission/order-submission";
+
+import DbAuthApply from '../components/db-auth-apply/db-auth-apply';
+import DbRoleQuery from '../components/db-role-query/db-role-query';
+import DbOwnerQueryAssign from '../components/db-owner-query-assign/db-owner-query-assign';
+import BigDataOrder from '../components/big-data-order/big-data-order';
+
 import OrderListInited from "../components/order-list-inited/order-list-inited";
 import OrderListAssigned from "../components/order-list-assigned/order-list-assigned";
 import OrderListRoleQuery from "../components/order-list-role-query/order-list-role-query";
@@ -12,8 +18,16 @@ import Ddl from "../components/ddl/ddl";
 import SlowQeuryStatics from "../components/slow-query-statics/slow-query-statics";
 import SlowQueryDetails from "../components/slow-query-details/slow-query-details";
 import MysqlMonitor from "../components/mysql-monitor/mysql-monitor";
+import localState from "../store";
 
 Vue.use(VueRouter);
+
+let localTabIndex = localState.state.tabIndex;
+console.log(localTabIndex);
+
+function routerViewName() {
+  return `/index/query/mysql-stable-query?index=${localTabIndex.mysqlStableQueryIndex}`;
+}
 
 export default new VueRouter({
   mode: 'history',
@@ -36,15 +50,17 @@ export default new VueRouter({
       children: [
         // 查询路由
         {
-          path: 'query/mysql-query',
+          path: '/index/query/mysql-query',
           components: {
-            querySlashMysqlQuery: Query
+            [`/index/query/mysql-query?index=0`]: Query
           }
         },
         {
           path: 'query/mysql-stable-query',
           components: {
-            querySlashMysqlStableQuery: Query
+            // 优化：可以提前准备5-10条，
+            // 在当前存在的标签页超过这个数时再动态添加路由。
+            // [`/index/query/mysql-stable-query?index=`]: Query
           }
         },
         {
@@ -79,6 +95,40 @@ export default new VueRouter({
           }
         },
         {
+          path: 'db-auth-apply',
+          component: DbAuthApply
+        },
+        {
+          path: 'db-role-query',
+          components: {
+            dbRoleQuery: DbRoleQuery
+          }
+        },
+        {
+          path: 'db-owner-query-assign',
+          components: {
+            dbOwnerQueryAssign: DbOwnerQueryAssign
+          }
+        },
+        {
+          path: 'big-data-order',
+          components: {
+            bigDataOrder: BigDataOrder
+          }
+        },
+        {
+          path: 'dml',
+          components: {
+            dml: Dml
+          }
+        },
+        {
+          path: 'ddl',
+          components: {
+            ddl: Ddl
+          }
+        },
+        {
           path: 'order-list/order-list-inited',
           components: {
             orderListSlashOrderListInited: OrderListInited
@@ -94,18 +144,6 @@ export default new VueRouter({
           path: 'order-list/order-list-role-query',
           components: {
             orderListSlashOrderListRoleQuery: OrderListRoleQuery
-          }
-        },
-        {
-          path: 'dml',
-          components: {
-            dml: Dml
-          }
-        },
-        {
-          path: 'ddl',
-          components: {
-            ddl: Ddl
           }
         },
         {
