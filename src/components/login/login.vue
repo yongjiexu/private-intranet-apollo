@@ -15,7 +15,7 @@
         </FormItem>
         <br/>
         <FormItem class="form-item">
-          <Button type="primary" @click="handleSubmit('formInline')">登录</Button>
+          <Button type="primary" @click="test">登录</Button>
         </FormItem>
       </Form>
     </card>
@@ -23,6 +23,9 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex';
+  import {mapMutations} from 'vuex';
+
   export default {
     name: 'login',
     data() {
@@ -41,11 +44,34 @@
         }
       };
     },
+    computed: mapState([
+      'tabIndex',
+      'tabContents',
+      'currentActiveTabName'
+    ]),
     methods: {
-      handleSubmit(name) {
-        this.$refs[name].validate((valid) => {
+      ...mapMutations({
+        setTabContents: 'SET_TABCONTENTS',
+        setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME',
+        setTabIndex: 'SET_TAB_INDEX'
+      }),
+      // 为什么用handleSubmit函数名，this 等于 undefined
+      test() {
+        this.$refs["formInline"].validate((valid) => {
           if (valid) {
             this.$Message.success('Success!');
+            // 拿到的用户名、密码，应该持久化到本地。考虑vuex-persistence 或 localStorage
+            this.$http.log.login.post({
+              username: this.formInline.user,
+              password: this.formInline.password
+            });
+            this.setTabIndex('mysqlQueryIndex');
+            this.$router.push({
+              path: '/index/query/mysql-query',
+              query: {
+                index: this.tabIndex.mysqlQueryIndex
+              }
+            });
           } else {
             this.$Message.error('Fail!');
           }
@@ -61,6 +87,14 @@
     justify-content: center;
     align-items: center;
     margin-top: 15%;
+  }
+
+  >>> .ivu-card-head {
+    text-align: center;
+  }
+
+  >>> .ivu-form-item-content {
+    text-align: center;
   }
 
   .card {
