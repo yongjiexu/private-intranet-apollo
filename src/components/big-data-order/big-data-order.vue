@@ -26,7 +26,7 @@
         <FormItem label="详情描述:" prop="detailDesc">
           <Input type="textarea" v-model="formValidate.detailDesc"></Input>
         </FormItem>
-        <FormItem>
+        <FormItem class="submit">
           <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
         </FormItem>
       </Form>
@@ -36,49 +36,49 @@
 
 <script>
   export default {
-    name: "big-data",
+    name: 'big-data',
     data() {
       return {
         dbs: [],
         dbUsers: [],
         dbOwnerIds: [],
         formValidate: {
-          selectedDbType: "",
-          selectedDb: "",
+          selectedDbType: '',
+          selectedDb: '',
           selectedDbId: undefined,
-          selectedDbOwnerInfo: "",
-          sqlStatement: "",
-          detailDesc: ""
+          selectedDbOwnerInfo: '',
+          sqlStatement: '',
+          detailDesc: '',
         },
         ruleValidate: {
           selectedDbType: [
-            {required: true, message: "请选择一个数据库", trigger: "blur"}
+            {required: true, message: '请选择一个数据库', trigger: 'blur'},
           ],
           selectedDb: [
-            {required: true, message: "请选择一个数据库", trigger: "blur"}
+            {required: true, message: '请选择一个数据库', trigger: 'blur'},
           ],
           selectedDbId: [
             {
-              type: "number",
+              type: 'number',
               required: true,
-              message: "请选择一个数据库id",
-              trigger: "blur"
-            }
+              message: '请选择一个数据库id',
+              trigger: 'blur',
+            },
           ],
           selectedDbOwnerInfo: [
-            {required: true, message: "请选择数据库owner", trigger: "blur"}
+            {required: true, message: '请选择数据库owner', trigger: 'blur'},
           ],
           sqlStatement: [
-            {required: true, message: "请选择一个数据库", trigger: "blur"}
+            {required: true, message: '请选择一个数据库', trigger: 'blur'},
           ],
           detailDesc: [
-            {required: true, message: "请选择一个数据库", trigger: "blur"}
-          ]
-        }
+            {required: true, message: '请选择一个数据库', trigger: 'blur'},
+          ],
+        },
       };
     },
     computed: {
-      dbOwnersInfo: function () {
+      dbOwnersInfo: function() {
         return this.dbUsers.filter(dbUser => {
           for (let i = 0; i < this.dbOwnerIds.length; i++) {
             if (dbUser.id.toString() === this.dbOwnerIds[i]) {
@@ -88,13 +88,13 @@
           return false;
         });
       },
-      dbOwnersNameList: function () {
+      dbOwnersNameList: function() {
         return this.dbOwnersInfo
           .map(dbOwnerInfo => {
             return dbOwnerInfo.last_name;
           })
-          .join(",");
-      }
+          .join(',');
+      },
     },
     mounted() {
       this.init();
@@ -106,10 +106,10 @@
         console.log(value);
         //  选择数据库后，发请求拿到数据库编号、owner
         this.formValidate.selectedDbId = await this.$http.db.mysqlDbId.getDbId({
-          alias: value
+          alias: value,
         });
         this.dbOwnerIds = await this.$http.auth.owner.get({
-          alias: value
+          alias: value,
         });
         this.dbUsers = await this.$http.auth.user.get();
         this.formValidate.selectedDbOwnerInfo = this.dbOwnersNameList;
@@ -118,34 +118,33 @@
       async handleSelectDbType(value) {
         this.formValidate.selectedDbType = value;
         //  查询属于这种数据库类型的数据库
-        if (value === "mysql") {
+        if (value === 'mysql') {
           this.dbs = await this.$http.db.mysqlDb.get({
-            env: "prod"
+            env: 'prod',
           });
         } else {
           this.dbs = await this.$http.db.pgDb.get({
-            env: "prod"
+            env: 'prod',
           });
         }
       },
       async handleSubmit(name) {
         this.$refs[name].validate(valid => {
           if (valid) {
-            this.$Message.success("Success!");
-            debugger;
+            this.$Message.success('Success!');
             // 验证成功，提交请求
             this.$http.auth.largeData.createLargeData({
               db_id: this.formValidate.selectedDbId,
               description: this.formValidate.detailDesc,
               sql: this.formValidate.sqlStatement,
-              ticket_type: 4
+              ticket_type: 4,
             });
           } else {
-            this.$Message.error("Fail!");
+            this.$Message.error('Fail!');
           }
         });
-      }
-    }
+      },
+    },
   };
 </script>
 
@@ -154,6 +153,7 @@
     width: 90%;
     margin: auto
   }
+
   .title {
     margin-bottom: 20px;
     padding-top: 26px;
@@ -163,8 +163,13 @@
     font-weight: 500;
     font-size: 18px;
   }
-  .form-wrapper{
+
+  .form-wrapper {
     width: 70%;
     margin: auto;
+  }
+
+  .submit {
+    text-align: center;
   }
 </style>

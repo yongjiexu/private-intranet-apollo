@@ -14,10 +14,12 @@ export default {
     state.tabContents[payload.tabIndex].name = payload.newName;
   },
   SET_CURRENT_ACTIVE_TAB_NAME(state, payload) {
-    debugger
     state.currentActiveTabName = payload;
   },
   SET_TAB_INDEX(state, payload) {
     state.tabIndex[payload]++;
-  }
+  },
+  SET_USERNAME(state, payload) {
+    state.userName = payload;
+  },
 };

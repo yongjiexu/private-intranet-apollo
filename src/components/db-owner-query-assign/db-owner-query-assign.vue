@@ -21,7 +21,7 @@
             </Option>
           </Select>
         </FormItem>
-        <FormItem>
+        <FormItem class="submit">
           <Button type="primary" @click="handleSubmit('formValidate')">Submit</Button>
         </FormItem>
       </Form>
@@ -36,32 +36,32 @@
         dbUsers: [],
         dbOwnerIds: [],
         formValidate: {
-          selectedDb: "",
-          selectedDbId: "",
-          selectedDbOwnerIds: []
+          selectedDb: '',
+          selectedDbId: '',
+          selectedDbOwnerIds: [],
         },
         ruleValidate: {
           selectedDb: [
-            {required: true, message: "请选择一个数据库", trigger: "blur"}
+            {required: true, message: '请选择一个数据库', trigger: 'blur'},
           ],
           selectedDbId: [
-            {required: true, message: "请选择一个数据库id", trigger: "blur"}
+            {required: true, message: '请选择一个数据库id', trigger: 'blur'},
           ],
           // note 默认验证类型是String，如果数据类型不是string，就要显式指出验证类型
           // 选准关键词，google就能找到答案
           selectedDbOwnerIds: [
             {
-              type: "array",
+              type: 'array',
               required: true,
-              message: "请选择数据库owner",
-              trigger: "change"
-            }
-          ]
-        }
+              message: '请选择数据库owner',
+              trigger: 'change',
+            },
+          ],
+        },
       };
     },
     computed: {
-      dbOwnersInfo: function () {
+      dbOwnersInfo: function() {
         return this.dbUsers.filter(dbUser => {
           for (let i = 0; i < this.dbOwnerIds.length; i++) {
             if (dbUser.id.toString() === this.dbOwnerIds[i]) {
@@ -70,7 +70,7 @@
           }
           return false;
         });
-      }
+      },
     },
     mounted() {
       this.init();
@@ -79,36 +79,36 @@
       handleSubmit(name) {
         this.$refs[name].validate(valid => {
           if (valid) {
-            this.$Message.success("Success!");
+            this.$Message.success('Success!');
             // 验证成功，提交请求
             this.$http.auth.ownerShip.createownerShip({
               alias: this.formValidate.selectedDb,
               db_id: this.formValidate.selectedDbId,
-              userids: this.formValidate.selectedDbOwnerIds
+              userids: this.formValidate.selectedDbOwnerIds,
             });
           } else {
-            this.$Message.error("Fail!");
+            this.$Message.error('Fail!');
           }
         });
       },
       async init() {
         this.dbs = await this.$http.db.mysqlDb.get({
-          env: "ROLE"
+          env: 'ROLE',
         });
       },
       async handleSelectDb(value) {
         console.log(value);
         //  选择数据库后，发请求拿到数据库编号、owner
         this.formValidate.selectedDbId = (await this.$http.db.mysqlDbId.getDbId({
-          alias: value
+          alias: value,
         })).toString();
         this.dbOwnerIds = await this.$http.auth.owner.get({
-          alias: value
+          alias: value,
         });
         this.dbUsers = await this.$http.auth.user.get();
         console.log(this.dbOwnersInfo);
-      }
-    }
+      },
+    },
   };
 </script>`
 <style scoped>
@@ -130,5 +130,9 @@
   .form-wrapper {
     width: 70%;
     margin: auto;
+  }
+
+  .submit {
+    text-align: center;
   }
 </style>

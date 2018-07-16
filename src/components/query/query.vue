@@ -135,7 +135,7 @@
           this.loadingStatus.table = true;
           this.selectedTable = this.filterTables[key];
           let sql = this.code || "",
-            addedSql = "";
+              addedSql = "";
           if (this.databaseType == "mysql" || this.databaseType == "tidb") {
             addedSql = `SELECT * FROM ${this.selectedTable.name} LIMIT 200;`;
           } else {
@@ -262,6 +262,7 @@
   .db {
     flex: 0 0 200px;
     width: 240px;
+    height: auto;
     margin-right: 1px;
     /*height: ;*/
   }

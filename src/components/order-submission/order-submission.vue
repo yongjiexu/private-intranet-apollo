@@ -65,7 +65,6 @@
             tabIndex = index;
           }
         });
-        debugger;
         this.setTabIndex(`${index}`);
         this.$router.replace({
           path: `${path}`,

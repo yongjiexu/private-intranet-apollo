@@ -17,7 +17,8 @@
     "axios": "^0.18.0",
     "qs": "^6.5.2",
     "element-ui": "^2.4.1",
-    "vue-codemirror": "^4.0.5"
+    "vue-codemirror": "^4.0.5",
+    "vuex-persistedstate": "^2.5.4"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

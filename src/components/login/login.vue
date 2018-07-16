@@ -9,7 +9,11 @@
           </Input>
         </FormItem>
         <FormItem prop="password" class="form-item">
-          <Input type="password" v-model="formInline.password" placeholder="Password" class="input-area">
+          <Input type="password"
+                 v-model="formInline.password"
+                 placeholder="Password"
+                 class="input-area"
+                 @keyup.native.enter="test">
           <Icon type="ios-locked-outline" slot="prepend"></Icon>
           </Input>
         </FormItem>
@@ -32,52 +36,56 @@
       return {
         formInline: {
           user: '',
-          password: ''
+          password: '',
         },
         ruleInline: {
           user: [
-            {required: true, message: '请填写用户名', trigger: 'blur'}
+            {required: true, message: '请填写用户名', trigger: 'blur'},
           ],
           password: [
             {required: true, message: '请填写密码', trigger: 'blur'},
-          ]
-        }
+          ],
+        },
       };
     },
     computed: mapState([
       'tabIndex',
       'tabContents',
-      'currentActiveTabName'
+      'currentActiveTabName',
     ]),
     methods: {
       ...mapMutations({
         setTabContents: 'SET_TABCONTENTS',
         setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME',
-        setTabIndex: 'SET_TAB_INDEX'
+        setTabIndex: 'SET_TAB_INDEX',
+        setUserName: 'SET_USERNAME',
       }),
-      // 为什么用handleSubmit函数名，this 等于 undefined
       test() {
-        this.$refs["formInline"].validate((valid) => {
+        this.$refs['formInline'].validate(async (valid) => {
           if (valid) {
-            this.$Message.success('Success!');
             // 拿到的用户名、密码，应该持久化到本地。考虑vuex-persistence 或 localStorage
-            this.$http.log.login.post({
+            await this.$http.log.login.post({
               username: this.formInline.user,
-              password: this.formInline.password
+              password: this.formInline.password,
             });
+
+            this.setUserName(this.formInline.user);
             this.setTabIndex('mysqlQueryIndex');
             this.$router.push({
               path: '/index/query/mysql-query',
               query: {
-                index: this.tabIndex.mysqlQueryIndex
-              }
+                index: this.tabIndex.mysqlQueryIndex,
+              },
             });
           } else {
             this.$Message.error('Fail!');
           }
         });
-      }
-    }
+      },
+    },
+    created() {
+      localStorage.clear();
+    },
   };
 </script>
 

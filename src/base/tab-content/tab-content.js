@@ -12,7 +12,6 @@ export default {
     }
   },
   render(createElement) {
-    debugger
     // 获取目标位置或当前路由匹配的组件数组
     let components = this.$router.getMatchedComponents(this.route);
 

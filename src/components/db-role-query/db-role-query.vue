@@ -42,11 +42,11 @@
             <Option v-for="(dbUser,index) in selectedDbUser"
                     :key="index"
                     :value="dbUser.id.toString()">
-              {{dbUser["last_name"]}} {{dbUser["username"]}}
+              {{dbUser['last_name']}} {{dbUser['username']}}
             </Option>
           </Select>
         </FormItem>
-        <FormItem>
+        <FormItem class="submit">
           <Button type="primary"
                   @click="handleSubmit">
             提交
@@ -59,57 +59,57 @@
 
 <script>
   export default {
-    name: "role",
+    name: 'role',
     data() {
       return {
         dbs: [],
         selectedDbUser: [],
         selectedDbOwner: [],
-        selectedRole: "developer",
-        selectedDbOwnerForDisplay: "",
+        selectedRole: 'developer',
+        selectedDbOwnerForDisplay: '',
         formValidate: {
           userIds: [],
           peopleAssignment: [],
-          selectedDb: "",
-          dbId: "",
-          dbOwner: ""
+          selectedDb: '',
+          dbId: '',
+          dbOwner: '',
         },
 
         ruleValidate: {
           userIds: [
             {
               required: true,
-              message: "请指定人员分配",
-              trigger: "blur"
-            }
+              message: '请指定人员分配',
+              trigger: 'blur',
+            },
           ],
           selectedDb: [
             {
               required: true,
-              message: "请选择数据库",
-              trigger: "blur"
-            }
+              message: '请选择数据库',
+              trigger: 'blur',
+            },
           ],
           dbId: [
             {
               required: true,
-              trigger: "blur"
-            }
+              trigger: 'blur',
+            },
           ],
           selectedDbOwnerForDisplay: [
             {
               required: true,
-              trigger: "blur"
-            }
+              trigger: 'blur',
+            },
           ],
           detailDesc: [
             {
               required: true,
-              message: "请填写详情描述",
-              trigger: "blur"
-            }
-          ]
-        }
+              message: '请填写详情描述',
+              trigger: 'blur',
+            },
+          ],
+        },
       };
     },
     mounted() {
@@ -125,17 +125,17 @@
         this.userIds = value;
       },
       async init() {
-        this.dbs = await this.$http.db.mysqlDb.get({env: "ROLE"});
+        this.dbs = await this.$http.db.mysqlDb.get({env: 'ROLE'});
       },
       async handleSelectDb(value) {
         this.formValidate.selectedDb = value;
         console.log(value);
         this.formValidate.dbId = (await this.$http.db.mysqlDbId.getDbId({
-          alias: value
+          alias: value,
         })).toString();
 
         this.selectedDbOwner = await this.$http.auth.owner.get({
-          alias: value
+          alias: value,
         });
         this.selectedDbUser = await this.$http.auth.user.get();
 
@@ -150,7 +150,7 @@
           }
           return false;
         });
-        let result = "";
+        let result = '';
         for (let i = 0; i < dbOwnerInfo.length; i++) {
           result += `${dbOwnerInfo[i].last_name},`;
         }
@@ -161,10 +161,10 @@
         let peopleAssignmentIds = await this.$http.auth.role.get({
           alias: this.formValidate.selectedDb,
           type: this.selectedRole,
-          db_id: 12
+          db_id: 12,
         });
         //  根据ids筛选出数组，从筛选出的数组中组织数据
-        let peopleAssignmentIdsArray = peopleAssignmentIds.ids === null ? [] : peopleAssignmentIds.ids.split(",");
+        let peopleAssignmentIdsArray = peopleAssignmentIds.ids === null ? [] : peopleAssignmentIds.ids.split(',');
         let peopleAssignmentArray = _selectedDbUser.filter(dbUser => {
           for (let i = 0; i < peopleAssignmentIdsArray.length; i++) {
             if (dbUser.id.toString() === peopleAssignmentIdsArray[i]) {
@@ -177,28 +177,28 @@
           peopleAssignment => {
             return {
               value: peopleAssignment.id.toString(),
-              label: `${peopleAssignment.username} ${peopleAssignment.last_name}`
+              label: `${peopleAssignment.username} ${peopleAssignment.last_name}`,
             };
-          }
+          },
         );
       },
       handleSubmit() {
-        this.$refs["formValidate"].validate(valid => {
+        this.$refs['formValidate'].validate(valid => {
           if (valid) {
-            console.log("表单验证成功");
+            console.log('表单验证成功');
             //  表单验证成功后提交表单
             this.$http.auth.roleUpdate.update({
               db_id: this.formValidate.dbId,
               role: this.selectedRole,
-              userids: this.userIds
+              userids: this.userIds,
             });
             //  todo 提交成功后跳转到工单详情页
           } else {
-            console.log("表单验证失败");
+            console.log('表单验证失败');
           }
         });
-      }
-    }
+      },
+    },
   };
 </script>
 
@@ -221,5 +221,9 @@
   .form-wrapper {
     width: 70%;
     margin: auto;
+  }
+
+  .submit {
+    text-align: center;
   }
 </style>

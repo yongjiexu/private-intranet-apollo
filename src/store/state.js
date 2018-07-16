@@ -24,15 +24,16 @@ export default {
     orderListRoleQueryIndex: -1,
     slowQueryStatisticsIndex: -1,
     slowQueryDetailIndex: -1,
-    mysqlMonitorIndex: -1
+    mysqlMonitorIndex: -1,
   },
   tabContents: [
     {
-      route:'/index/query/mysql-query',
+      route: '/index/query/mysql-query',
       // 传给TabPane，作为TabPane的name，给程序员用
       name: '/index/query/mysql-query?index=0',
       // 传给TabPane，作为TabPane的标签标志，给用户看
-      label: 'MYSQL查询'
-    }
-  ]
+      label: 'MYSQL查询',
+    },
+  ],
+  userName: '',
 };

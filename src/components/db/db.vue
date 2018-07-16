@@ -1,21 +1,30 @@
 <template>
-  <div style="height:100%;background: #e0e0e0;" class="dbViewer" ref="menucontainer">
-    <Input v-model="dbName" placeholder="筛选数据库" size="small" @on-change="filterDb"></Input>
+  <div style="background: #e0e0e0;" class="dbViewer" ref="menucontainer">
+    <Input placeholder="筛选数据库" size="small"
+           v-model="dbName"
+           @on-change="filterDb"/>
     <div class="filter-container">
-      <pdMenu style="height:100%;width:100%" ref="menu" :loading="loading" :open-names="openMenu" @on-select="selectTable" mode="vertical" accordion @on-open-change="changeDB" :active-name="activeName" v-if="type=='showDB'">
+      <pdMenu style="height:100%;width:100%" ref="menu"
+              mode="vertical" accordion
+              :loading="loading" :open-names="openMenu"
+              :active-name="activeName"
+              @on-open-change="changeDB"
+              @on-select="selectTable"
+              v-if="type=='showDB'">
         <pdSubmenu :name="theDb" v-for="theDb in filterDbs" :key='theDb'>
           <template slot="title">
             <Icon type="ios-box"></Icon>
             <span>{{theDb}}</span>
           </template>
           <pdMenuItem name='a_input'>
-            <Input v-model="chosedTable" placeholder="筛选表(只展示前100条，请搜索)" size="small" v-if="!!tables&&tables?tables.length>0:''" @on-change="filterTable" />
+            <Input placeholder="筛选表(只展示前100条，请搜索)" size="small"
+                   v-model="chosedTable"
+                   v-if="!!tables&&tables?tables.length>0:''"
+                   @on-change="filterTable"/>
           </pdMenuItem>
           <pdMenuItem :name="`${key}`" v-for="(table,key) in filterTables" :key="key">
-            <!-- <Icon type="ios-folder-outline"></Icon> -->
             <span>{{`${databaseType=='pg'?table.schema+' - ':''}${table.name}`}}</span>
             <span class="table-menu-item-operate">
-                            <!-- <span @click="onCopy(`${databaseType=='pg'?table.schema+' - ':''}${table.name}`,$event)"><Icon type="ios-copy"></Icon></span> -->
                             <span @click="poptipStopDefault">
                                 <Poptip trigger="hover" placement="right" :transfer="true">
                                     <span>
@@ -33,7 +42,8 @@
                         </span>
           </pdMenuItem>
         </pdSubmenu>
-        <pdSubmenu name="addmore" :additional="true" v-if="dbName?(dbs.length>filterDbs.length&&filterDbs.length<showDbs.length):(dbs.length>filterDbs.length)">
+        <pdSubmenu name="addmore" :additional="true"
+                   v-if="dbName?(dbs.length>filterDbs.length&&filterDbs.length<showDbs.length):(dbs.length>filterDbs.length)">
           <template slot="title">
             <span style="display:block" @click="addMore">点击加载更多...</span>
           </template>
@@ -44,24 +54,23 @@
 </template>
 
 <script>
-  import { Message } from "iview";
+  import {Message} from "iview";
   import pdMenu from "../../base/menu/index";
   import pdSubmenu from "../../base/menu/submenu.vue";
   import pdMenuItem from "../../base/menu/menu-item.vue";
+  import {getTable} from "../../api/query/dashboard";
 
   export default {
     props: [
       "db",
       "dbs",
-      "changeDB",
+      // "changeDB",
       "loadingStatus",
       "selectedTable",
       "selectTable",
-      "tables",
       "openMenu",
       "getInfo",
       // "showMenu",
-      "selectedDB",
       "updateShowMenu",
       "activeName",
       "updateActiveName",
@@ -71,7 +80,7 @@
       "loading",
       "getFilterTables"
     ],
-    components: { pdMenu, pdSubmenu, pdMenuItem },
+    components: {pdMenu, pdSubmenu, pdMenuItem},
     data() {
       return {
         dbName: "",
@@ -80,10 +89,11 @@
         filterDbs: [],
         showDbs: [],
         filterTables: [],
-        showMenu: false
+        showMenu: false,
+        selectedDB: "",
+        tables: []
       };
     },
-
     methods: {
       stopDefault(e) {
         e.stopPropagation();
@@ -153,22 +163,40 @@
         e.preventDefault();
         e.stopPropagation();
         this.$copyText(name).then(
-          function(e) {
+          function (e) {
             Message.info({
               content: "复制成功",
               duration: 2
             });
           },
-          function(e) {
+          function (e) {
             Message.info({
               content: "复制失败",
               duration: 2
             });
           }
         );
+      },
+      changeDB(subMenuNameList, e) {
+        console.log(subMenuNameList);
+        this.$eventBus.$emit("select-db", subMenuNameList);
+        this.selectedDB = subMenuNameList[0];
+        this.tables = [];
+        if (this.selectedDB && subMenuNameList != "addmore") {
+          getTable(this.databaseType, {
+            alias: subMenuNameList[0],
+            env: "stable"
+          })
+            .then(res => {
+              this.tables = res.data;
+              this.filterTables = this.tables;
+            })
+            .catch(e => {
+              this.loading = false;
+            });
+        }
       }
     },
-
     watch: {
       tables(newData, old) {
         if (newData.length < 100) {
@@ -190,10 +218,10 @@
         }
       },
       activeName(val) {
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           this.$refs.menu.updateActiveName();
         });
-      }
+      },
     }
   };
 </script>

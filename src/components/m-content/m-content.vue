@@ -1,9 +1,10 @@
 <template>
   <div class="content-wrapper">
-    <el-tabs :value="currentActiveTabName" type="card" closable
-             @tab-remove="removeTab"
-             @tab-click="clickTab">
-      <el-tab-pane
+    <Tabs :value="currentActiveTabName" type="card" closable
+          :animated="false"
+          @on-tab-remove="removeTab"
+          @on-click="clickTab">
+      <TabPane
         v-for="(tabContent, index) in tabContents"
         :key="tabContent.name"
         :label="tabContent.label"
@@ -12,8 +13,8 @@
           :route="tabContent.route"
           :index="index">
         </TabContent>
-      </el-tab-pane>
-    </el-tabs>
+      </TabPane>
+    </Tabs>
   </div>
 </template>
 
@@ -23,17 +24,17 @@
   import {mapMutations} from 'vuex';
 
   export default {
-    name: "m-content",
+    name: 'm-content',
     data() {
       return {};
     },
     components: {
-      TabContent
+      TabContent,
     },
     computed: mapState([
       'tabIndex',
       'tabContents',
-      'currentActiveTabName'
+      'currentActiveTabName',
     ]),
     watch: {
       /**
@@ -43,7 +44,6 @@
        * @param from
        */
       '$route'(to, from) {
-        debugger
         console.log(`${from.fullPath} --> ${to.fullPath}`);
         let toFullPath = to.fullPath;
         let path = to.fullPath.split('?');
@@ -52,26 +52,25 @@
         /* 设置当前激活页
         todo 以后随着页面的增多，判断条件会跟着变复杂
          */
-        debugger
         this.setCurrentActiveName(to.fullPath);
         // if (to.fullPath !== '/index/db-auth-apply') {}
-      }
+      },
     },
     mounted() {
       this.setCurrentActiveName('/index/query/mysql-query?index=0');
-      document.querySelector(".el-tabs__content").style.height = "100%";
+      // document.querySelector(".el-tabs__content").style.height = "100%";
     },
     methods: {
       ...mapMutations({
         setCurrentActiveName: 'SET_CURRENT_ACTIVE_TAB_NAME',
-        deleteTabContentsElm: 'DELETE_TABCONTENTS_ELM'
+        deleteTabContentsElm: 'DELETE_TABCONTENTS_ELM',
       }),
       clickTab(tabInstance) {
         console.log(tabInstance);
         console.log(`点击了${tabInstance.name}`);
         this.setCurrentActiveName(tabInstance.name);
         this.$router.push({
-          path: tabInstance.name
+          path: tabInstance.name,
         });
       },
       removeTab(targetName) {
@@ -89,7 +88,7 @@
         }
         this.setCurrentActiveName(activeName);
         this.$router.push({
-          path: activeName
+          path: activeName,
         });
         this.deleteTabContentsElm(targetName);
       },
@@ -98,7 +97,7 @@
         this.setCurrentActiveName(name);
         console.log(`当前激活的标签页${this.currentActiveTabName}`);
         this.$router.push({
-          path: name
+          path: name,
         });
       },
       handleTabRemove(name) {
@@ -107,8 +106,8 @@
         // todo 删除tabContents元素会导致tabs组件渲染异常。以后去tabs组件中查明原因。
         // 解决办法：给key加上时间戳。dont't know why
         // this.deleteTabContentsElm(name);
-      }
-    }
+      },
+    },
   };
 </script>
 

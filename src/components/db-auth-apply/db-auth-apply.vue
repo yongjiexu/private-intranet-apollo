@@ -39,7 +39,7 @@
           <Input type="textarea"
                  v-model="formValidate.detailDesc"/>
         </FormItem>
-        <FormItem>
+        <FormItem class="submit">
           <Button type="primary"
                   @click="handleSubmit">
             提交
@@ -52,52 +52,52 @@
 
 <script>
   export default {
-    name: "db-auth-apply",
+    name: 'db-auth-apply',
     data() {
       return {
         dbs: [],
         selectedDbOwner: [],
-        selectedDbOwnerForDisplay: "",
+        selectedDbOwnerForDisplay: '',
         selectedDbUser: [],
 
         formValidate: {
-          ticketType: "",
-          selectedDb: "",
-          dbId: "",
-          dbOwner: "",
-          detailDesc: ""
+          ticketType: '',
+          selectedDb: '',
+          dbId: '',
+          dbOwner: '',
+          detailDesc: '',
         },
 
         ruleValidate: {
           ticketType: [
             {
               required: true,
-              message: "请选择工单类型",
-              trigger: "blur"
-            }
+              message: '请选择工单类型',
+              trigger: 'blur',
+            },
           ],
           selectedDb: [
             {
               required: true,
-              message: "请选择数据库",
-              trigger: "blur"
-            }
+              message: '请选择数据库',
+              trigger: 'blur',
+            },
           ],
           dbId: [
             {
               required: true,
-              trigger: "blur"
-            }
+              trigger: 'blur',
+            },
           ],
-          dbOwner: "",
+          dbOwner: '',
           detailDesc: [
             {
               required: true,
-              message: "请填写详情描述",
-              trigger: "blur"
-            }
-          ]
-        }
+              message: '请填写详情描述',
+              trigger: 'blur',
+            },
+          ],
+        },
       };
     },
     mounted() {
@@ -105,15 +105,15 @@
     },
     methods: {
       async init() {
-        this.dbs = await this.$http.db.mysqlDb.get({env: "TEMP"});
+        this.dbs = await this.$http.db.mysqlDb.get({env: 'TEMP'});
       },
       async handleSelectDb(value) {
         this.formValidate.selectedDb = value;
         this.formValidate.dbId = (await this.$http.db.mysqlDbId.getDbId({
-          alias: value
+          alias: value,
         })).toString();
         this.selectedDbOwner = await this.$http.auth.owner.get({
-          alias: value
+          alias: value,
         });
         this.selectedDbUser = await this.$http.auth.user.get();
 
@@ -127,7 +127,7 @@
           }
           return false;
         });
-        let result = "";
+        let result = '';
         for (let i = 0; i < dbOwnerInfo.length; i++) {
           result += `${dbOwnerInfo[i].username} ${dbOwnerInfo[i].last_name},`;
         }
@@ -135,22 +135,22 @@
         this.selectedDbOwnerForDisplay = result;
       },
       handleSubmit() {
-        this.$refs["formValidate"].validate(valid => {
+        this.$refs['formValidate'].validate(valid => {
           if (valid) {
-            console.log("表单验证成功");
+            console.log('表单验证成功');
             //  表单验证成功后提交表单
             this.$http.auth.dbAuth.createDbAuth({
               db_id: this.formValidate.dbId,
               description: this.formValidate.detailDesc,
-              ticket_type: 1
+              ticket_type: 1,
             });
             //  todo 提交成功后跳转到工单详情页
           } else {
-            console.log("表单验证失败");
+            console.log('表单验证失败');
           }
         });
-      }
-    }
+      },
+    },
   };
 </script>
 
@@ -159,6 +159,7 @@
     width: 90%;
     margin: auto
   }
+
   .title {
     margin-bottom: 20px;
     padding-top: 26px;
@@ -168,8 +169,13 @@
     font-weight: 500;
     font-size: 18px;
   }
-  .form-wrapper{
+
+  .form-wrapper {
     width: 70%;
     margin: auto;
+  }
+
+  .submit {
+    text-align: center;
   }
 </style>

@@ -50,18 +50,14 @@ export default new VueRouter({
       children: [
         // 查询路由
         {
-          path: '/index/query/mysql-query',
+          path: 'query/mysql-query',
           components: {
             [`/index/query/mysql-query?index=0`]: Query
           }
         },
         {
           path: 'query/mysql-stable-query',
-          components: {
-            // 优化：可以提前准备5-10条，
-            // 在当前存在的标签页超过这个数时再动态添加路由。
-            // [`/index/query/mysql-stable-query?index=`]: Query
-          }
+          component: Query
         },
         {
           path: 'query/pg-query',
